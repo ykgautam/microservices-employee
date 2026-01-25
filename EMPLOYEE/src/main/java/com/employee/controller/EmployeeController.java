@@ -1,0 +1,54 @@
+package com.employee.controller;
+
+import com.employee.model.dto.EmployeeDto;
+import com.employee.service.EmployeeService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/employees")
+public class EmployeeController {
+
+    private final EmployeeService employeeService;
+
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
+    }
+
+    @PostMapping("/save")
+    public ResponseEntity<EmployeeDto> saveEmployee(@RequestBody EmployeeDto employeeDto) {
+        EmployeeDto response = employeeService.saveEmployee(employeeDto);
+        return new ResponseEntity<EmployeeDto>(response, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<EmployeeDto> updateEmployee(@RequestBody EmployeeDto employeeDto, @PathVariable Long id) {
+        EmployeeDto response = employeeService.updateEmployee(id, employeeDto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteEmployee(@PathVariable Long id) {
+        employeeService.deleteEmployee(id);
+        return new ResponseEntity<>("Employee deleted successfully", HttpStatus.OK);
+
+    }
+
+    @GetMapping("/get/{id}")
+    public ResponseEntity<EmployeeDto> getSingleEmployee(@PathVariable Long id) {
+        EmployeeDto employee = employeeService.getSingleEmployee(id);
+        return new ResponseEntity<>(employee, HttpStatus.OK);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<EmployeeDto>> getSingleEmployee() {
+        List<EmployeeDto> allEmployees = employeeService.getAllEmployees();
+        return new ResponseEntity<>(allEmployees, HttpStatus.OK);
+    }
+
+
+}
