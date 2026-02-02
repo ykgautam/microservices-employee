@@ -1,10 +1,5 @@
-package com.employee.model.dto;
+package com.address.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
-import java.util.List;
-
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EmployeeDto {
 
     private Long id;
@@ -12,8 +7,6 @@ public class EmployeeDto {
     private String empEmail;
     private String empCode;
     private String companyName;
-
-    private List<AddressDto> addresses;
 
     public Long getId() {
         return id;
@@ -53,13 +46,5 @@ public class EmployeeDto {
 
     public void setCompanyName(String companyName) {
         this.companyName = companyName;
-    }
-
-    public List<AddressDto> getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(List<AddressDto> addresses) {
-        this.addresses = addresses;
     }
 }

@@ -1,8 +1,10 @@
 package com.address.service.impl;
 
+import com.address.client.EmployeeClient;
 import com.address.model.dto.AddressDto;
 import com.address.model.dto.AddressRequest;
 import com.address.model.dto.AddressRequestDto;
+import com.address.model.dto.EmployeeDto;
 import com.address.model.entity.Address;
 import com.address.repository.AddressRepository;
 import com.address.service.AddressService;
@@ -26,13 +28,22 @@ public class AddressServiceImpl implements AddressService {
 
     private final ModelMapper modelMapper;
 
-    public AddressServiceImpl(AddressRepository addressRepository, ModelMapper modelMapper) {
+    private final EmployeeClient employeeClient;
+
+    public AddressServiceImpl(AddressRepository addressRepository, ModelMapper modelMapper,
+                              EmployeeClient employeeClient) {
         this.addressRepository = addressRepository;
         this.modelMapper = modelMapper;
+        this.employeeClient = employeeClient;
     }
 
     @Override
     public List<AddressDto> saveAddress(AddressRequest addressRequest) {
+        employeeClient.getSingleEmployee(addressRequest.getEmpId());
+//        System.out.println("address "+employee);
+//        if (employee == null) {
+//            throw new ResourceNotFoundException("Employee not found with employee id " + addressRequest.getEmpId());
+//        }
         List<Address> addressList = this.saveOrUpdateAddressRequest(addressRequest);
         List<Address> savedAddressList = addressRepository.saveAll(addressList);
         return savedAddressList.stream().map(address -> modelMapper.map(address, AddressDto.class)).toList();
@@ -40,6 +51,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public List<AddressDto> updateAddress(AddressRequest addressRequest) {
+        employeeClient.getSingleEmployee(addressRequest.getEmpId());
         List<Address> addressListByImpId = addressRepository.findAllByEmpId(addressRequest.getEmpId());
         if (addressListByImpId.isEmpty()) {
             log.info("no address found for this emp Id: {} ", addressRequest.getEmpId());
@@ -79,6 +91,12 @@ public class AddressServiceImpl implements AddressService {
         return all.stream().map(address -> modelMapper.map(address, AddressDto.class)).toList();
     }
 
+    @Override
+    public List<AddressDto> getAddressbyEmpId(Long empId) {
+        List<Address> addressListByImpId = addressRepository.findAllByEmpId(empId);
+        return addressListByImpId.stream().map(address -> modelMapper.map(address, AddressDto.class)).toList();
+    }
+
     private List<Address> saveOrUpdateAddressRequest(AddressRequest addressRequest) {
         List<Address> addressList = new ArrayList<>();
         List<AddressRequestDto> addressRequestDtoList = addressRequest.getAddressRequestDtoList();
@@ -95,4 +113,6 @@ public class AddressServiceImpl implements AddressService {
         }
         return addressList;
     }
+
+
 }

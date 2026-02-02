@@ -24,4 +24,10 @@ public class GlobalExceptionHandler {
         ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getStatus());
         return new ResponseEntity<>(response, ex.getStatus());
     }
+
+    @ExceptionHandler(CustomeException.class)
+    public ResponseEntity<ErrorResponse> handleCustomeException(CustomeException ex) {
+        ErrorResponse response = new ErrorResponse(ex.getMessage(), ex.getStatus());
+        return new ResponseEntity<>(response, ex.getStatus());
+    }
 }
